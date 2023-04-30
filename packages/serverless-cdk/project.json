@@ -1,0 +1,46 @@
+{
+  "name": "serverless-cdk",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "packages/serverless-cdk/src",
+  "targets": {
+    "bootstrap": {
+      "executor": "@cubesoft/nx-cdk:bootstrap"
+    },
+    "deploy": {
+      "executor": "@cubesoft/nx-cdk:deploy"
+    },
+    "destroy": {
+      "executor": "@cubesoft/nx-cdk:destroy"
+    },
+    "diff": {
+      "executor": "@cubesoft/nx-cdk:diff"
+    },
+    "ls": {
+      "executor": "@cubesoft/nx-cdk:ls"
+    },
+    "synth": {
+      "executor": "@cubesoft/nx-cdk:synth"
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {}
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/serverless-cdk/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    }
+  },
+  "tags": []
+}
