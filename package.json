@@ -7,8 +7,6 @@
   "dependencies": {
     "@aws-cdk/aws-apigatewayv2-alpha": "^2.77.0-alpha.0",
     "@aws-cdk/aws-apigatewayv2-integrations-alpha": "^2.77.0-alpha.0",
-    "@nrwl/workspace": "^16.0.1",
-    "aws-cdk-lib": "^2.77.0",
     "axios": "^1.0.0",
     "tslib": "^2.3.0"
   },
@@ -16,6 +14,7 @@
     "@cubesoft/nx-cdk": "^0.6.0",
     "@nrwl/jest": "^16.0.1",
     "@nrwl/linter": "^16.0.1",
+    "@nrwl/workspace": "^16.0.1",
     "@nx/esbuild": "16.0.1",
     "@nx/eslint-plugin": "16.0.1",
     "@nx/jest": "16.0.1",
@@ -28,6 +27,7 @@
     "@typescript-eslint/eslint-plugin": "^5.58.0",
     "@typescript-eslint/parser": "^5.58.0",
     "aws-cdk": "^2.58.01",
+    "aws-cdk-lib": "^2.77.0",
     "constructs": "^10.1.208",
     "esbuild": "^0.17.17",
     "eslint": "~8.15.0",
