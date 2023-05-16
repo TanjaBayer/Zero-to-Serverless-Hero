@@ -1,0 +1,5 @@
+{
+  "entrypoints": {
+    "serverless-api": "src/handler/serverless-api"
+  }
+}

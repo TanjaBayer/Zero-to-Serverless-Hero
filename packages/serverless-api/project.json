@@ -5,24 +5,12 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nx/esbuild:esbuild",
-      "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
+      "executor": "@cubesoft/nx-lambda-build:build",
       "options": {
-        "platform": "node",
-        "outputPath": "dist/packages/serverless-api",
-        "format": ["cjs"],
-        "bundle": false,
-        "main": "packages/serverless-api/src/main.ts",
-        "tsConfig": "packages/serverless-api/tsconfig.app.json",
-        "assets": ["packages/serverless-api/src/assets"],
-        "generatePackageJson": true,
-        "esbuildOptions": {
-          "sourcemap": true,
-          "outExtension": {
-            ".js": ".js"
-          }
-        }
+        "target": "node18",
+        "architecture": "arm64",
+        "platform": "linux",
+        "installModules": true
       },
       "configurations": {
         "development": {},

@@ -10,7 +10,9 @@ import {
   CorsHttpMethod,
 } from '@aws-cdk/aws-apigatewayv2-alpha';
 import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
+import { join } from 'path';
 
+import { getWorkspaceRoot } from '../utils/workspace';
 export class ServerlessStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
@@ -26,16 +28,15 @@ export class ServerlessStack extends Stack {
 
     const lambda = new Function(this, 'api-handler', {
       runtime: Runtime.NODEJS_18_X,
-      handler: 'index.handler',
-      code: Code.fromInline(`
-      exports.handler = async function(event) {
-        console.log("Hello, CDK!");
-        return {
-          statusCode: 200,
-          body: JSON.stringify('Hello from Lambda!'),
-        };
-      }
-    `),
+      handler: 'serverless-api.handler',
+      functionName: 'serverless-api',
+      code: Code.fromAsset(
+        join(
+          getWorkspaceRoot(),
+          'dist/packages/serverless-api/serverless-api',
+          'handler.zip'
+        )
+      ),
       memorySize: Size.gibibytes(1).toMebibytes(),
       architecture: Architecture.ARM_64,
       logRetention: RetentionDays.ONE_DAY,
