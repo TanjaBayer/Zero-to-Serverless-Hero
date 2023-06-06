@@ -6,10 +6,12 @@ import {
   handlers,
   startServerAndCreateLambdaHandler,
 } from '@as-integrations/aws-lambda';
-import { GreetingResolver } from '../resolver/greeting.resolver';
+import { PlantLibraryResolver } from '../resolver/plant-library.resolver';
+import Container from 'typedi';
 
 const schema = buildSchemaSync({
-  resolvers: [GreetingResolver],
+  resolvers: [PlantLibraryResolver],
+  container: Container,
   validate: { forbidUnknownValues: false },
   dateScalarMode: 'timestamp',
 });

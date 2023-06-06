@@ -9,12 +9,14 @@
     "@as-integrations/aws-lambda": "^2.0.1",
     "@aws-cdk/aws-apigatewayv2-alpha": "^2.77.0-alpha.0",
     "@aws-cdk/aws-apigatewayv2-integrations-alpha": "^2.77.0-alpha.0",
+    "@cubesoft/dynamo-easy": "^9.2.3",
     "aws-lambda": "^1.0.7",
     "axios": "^1.0.0",
     "graphql": "^16.6.0",
     "reflect-metadata": "^0.1.13",
     "tslib": "^2.3.0",
-    "type-graphql": "^2.0.0-beta.1"
+    "type-graphql": "^2.0.0-beta.1",
+    "typedi": "^0.10.0"
   },
   "devDependencies": {
     "@cubesoft/nx-cdk": "^0.6.0",
@@ -31,6 +33,7 @@
     "@nx/workspace": "16.0.1",
     "@types/jest": "^29.4.0",
     "@types/node": "~18.7.1",
+    "@types/uuid": "^9.0.1",
     "@typescript-eslint/eslint-plugin": "^5.58.0",
     "@typescript-eslint/parser": "^5.58.0",
     "aws-cdk": "^2.58.01",

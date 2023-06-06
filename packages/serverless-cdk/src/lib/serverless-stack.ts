@@ -1,4 +1,4 @@
-import { Stack, StackProps } from 'aws-cdk-lib';
+import { RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { Duration, Size } from 'aws-cdk-lib';
 import { Architecture, Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
@@ -13,6 +13,7 @@ import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-al
 import { join } from 'path';
 
 import { getWorkspaceRoot } from '../utils/workspace';
+import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 export class ServerlessStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
@@ -50,6 +51,14 @@ export class ServerlessStack extends Stack {
       'apiWriteIntegration',
       lambda
     );
+    const dataTable = new Table(this, 'data-table', {
+      tableName: `data_table`,
+      timeToLiveAttribute: 'ttl',
+      billingMode: BillingMode.PAY_PER_REQUEST,
+      removalPolicy: RemovalPolicy.DESTROY,
+      partitionKey: { name: 'id', type: AttributeType.STRING },
+    });
+    dataTable.grantReadWriteData(lambda);
 
     api.addRoutes({
       integration: readIntegration,
