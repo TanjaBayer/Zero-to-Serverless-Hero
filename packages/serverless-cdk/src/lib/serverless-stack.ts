@@ -14,6 +14,7 @@ import { join } from 'path';
 
 import { getWorkspaceRoot } from '../utils/workspace';
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
+import { UserAuthentication } from '../constructs/user-authentication.construct';
 export class ServerlessStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
@@ -53,13 +54,20 @@ export class ServerlessStack extends Stack {
     );
     const dataTable = new Table(this, 'data-table', {
       tableName: `data_table`,
-      timeToLiveAttribute: 'ttl',
       billingMode: BillingMode.PAY_PER_REQUEST,
       removalPolicy: RemovalPolicy.DESTROY,
       partitionKey: { name: 'id', type: AttributeType.STRING },
     });
     dataTable.grantReadWriteData(lambda);
 
+    const userTable = new Table(this, 'user-table', {
+      tableName: `user_table`,
+      billingMode: BillingMode.PAY_PER_REQUEST,
+      removalPolicy: RemovalPolicy.DESTROY,
+      partitionKey: { name: 'id', type: AttributeType.STRING },
+    });
+
+    new UserAuthentication(this, 'user-authentication', { userTable });
     api.addRoutes({
       integration: readIntegration,
       methods: [HttpMethod.GET],

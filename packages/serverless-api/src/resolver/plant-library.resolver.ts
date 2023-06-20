@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Arg, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Authorized, Mutation, Query, Resolver } from 'type-graphql';
 import { PlantType } from '../model/plant.type';
 import { PlantRepository } from '../repository/plant.repository';
 import { Service } from 'typedi';
@@ -16,6 +16,7 @@ export class PlantLibraryResolver {
     return this.plantRepository.listPlants();
   }
 
+  @Authorized()
   @Mutation(() => PlantType, {
     description: 'Add a new plant to the library.',
   })

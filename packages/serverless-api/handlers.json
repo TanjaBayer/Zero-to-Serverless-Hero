@@ -1,5 +1,6 @@
 {
   "entrypoints": {
-    "serverless-api": "src/handler/serverless-api"
+    "serverless-api": "src/handler/serverless-api",
+    "post-authentication": "src/handler/post-authentication"
   }
 }

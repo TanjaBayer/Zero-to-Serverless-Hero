@@ -9,9 +9,6 @@ import { PlantModel } from '../model/plant.model';
 @Service()
 export class PlantRepository {
   private dynamoDb = new DynamoDB({ region: 'eu-central-1' });
-  constructor() {
-    console.log('setup plant repository');
-  }
 
   async createOrUpdatePlant(plant: PlantModel): Promise<PlantModel> {
     const store = new DynamoStore(PlantModel, this.dynamoDb);
