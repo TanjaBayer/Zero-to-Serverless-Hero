@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { ApolloServer } from '@apollo/server';
 import 'graphql';
-import { ForbiddenError, buildSchemaSync } from 'type-graphql';
+import { buildSchemaSync } from 'type-graphql';
 import {
   handlers,
   startServerAndCreateLambdaHandler,
@@ -31,7 +31,7 @@ export const handler = startServerAndCreateLambdaHandler(
   server,
   handlers.createAPIGatewayProxyEventV2RequestHandler(),
   {
-    context: async ({ event, context }) => {
+    context: async ({ event }) => {
       const apiKey = getHeader('x-api-key', event.headers);
       if (!apiKey || !API_KEYS.includes(apiKey)) {
         throw new GraphQLError(
@@ -41,9 +41,13 @@ export const handler = startServerAndCreateLambdaHandler(
           }
         );
       }
+      const authToken = getHeader('authorization', event.headers);
+      const clientIp = event.requestContext.http.sourceIp;
+
       return {
-        lambdaEvent: event,
-        lambdaContext: context,
+        authToken,
+        apiKey,
+        clientIp,
       };
     },
   }

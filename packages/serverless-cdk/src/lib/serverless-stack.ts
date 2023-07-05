@@ -28,6 +28,19 @@ export class ServerlessStack extends Stack {
       },
     });
 
+    const userTable = new Table(this, 'user-table', {
+      tableName: `user_table`,
+      billingMode: BillingMode.PAY_PER_REQUEST,
+      removalPolicy: RemovalPolicy.DESTROY,
+      partitionKey: { name: 'id', type: AttributeType.STRING },
+    });
+
+    const userAuthentication = new UserAuthentication(
+      this,
+      'user-authentication',
+      { userTable }
+    );
+
     const lambda = new Function(this, 'api-handler', {
       runtime: Runtime.NODEJS_18_X,
       handler: 'serverless-api.handler',
@@ -43,6 +56,10 @@ export class ServerlessStack extends Stack {
       architecture: Architecture.ARM_64,
       logRetention: RetentionDays.ONE_DAY,
       timeout: Duration.seconds(5),
+      environment: {
+        COGNITO_USER_POOL_ID: userAuthentication.userPool.userPoolId,
+        REGION: Stack.of(this).region,
+      },
     });
     const readIntegration = new HttpLambdaIntegration(
       'apiReadIntegration',
@@ -59,15 +76,6 @@ export class ServerlessStack extends Stack {
       partitionKey: { name: 'id', type: AttributeType.STRING },
     });
     dataTable.grantReadWriteData(lambda);
-
-    const userTable = new Table(this, 'user-table', {
-      tableName: `user_table`,
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      removalPolicy: RemovalPolicy.DESTROY,
-      partitionKey: { name: 'id', type: AttributeType.STRING },
-    });
-
-    new UserAuthentication(this, 'user-authentication', { userTable });
     api.addRoutes({
       integration: readIntegration,
       methods: [HttpMethod.GET],

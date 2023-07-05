@@ -10,7 +10,12 @@ import { Construct } from 'constructs';
 import { getWorkspaceRoot } from '../utils/workspace';
 import { lambda } from '../utils/lambda';
 import { ITable } from 'aws-cdk-lib/aws-dynamodb';
-import { Effect, Policy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import {
+  Effect,
+  Policy,
+  PolicyStatement,
+  ServicePrincipal,
+} from 'aws-cdk-lib/aws-iam';
 
 import { join } from 'path';
 
@@ -49,10 +54,10 @@ export class UserAuthentication extends Construct {
 
     const postConfirmationHandler = lambda(
       this,
-      'post-authentication',
+      'post-auth',
       join(
         getWorkspaceRoot(),
-        'dist/packages/serverless-api/post-authentication',
+        'dist/packages/serverless-api/post-auth',
         'handler.zip'
       ),
       {
@@ -64,7 +69,7 @@ export class UserAuthentication extends Construct {
     );
 
     // For being able to add the lambda triggers https://github.com/aws/aws-cdk/issues/10002 we can not add it directly with addTrigger, because of the userPoolId reference which would result in a circular dependency
-    new custom_resources.AwsCustomResource(this, 'UpdateUserPool', {
+    new custom_resources.AwsCustomResource(this, 'update-user-pool', {
       logRetention: 30,
       resourceType: 'Custom::UpdateUserPool',
       // https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_UpdateUserPool.html#CognitoUserPools-UpdateUserPool-request-EmailConfiguration
@@ -97,6 +102,15 @@ export class UserAuthentication extends Construct {
         resources: custom_resources.AwsCustomResourcePolicy.ANY_RESOURCE,
       }),
     });
+    const invokeCognitoTriggerPermission = {
+      principal: new ServicePrincipal('cognito-idp.amazonaws.com'),
+      sourceArn: this.userPool.userPoolArn,
+    };
+
+    postConfirmationHandler.addPermission(
+      'InvokePostConfirmationHandlerPermission',
+      invokeCognitoTriggerPermission
+    );
 
     props.userTable.grantReadWriteData(postConfirmationHandler);
     this.userPool.addDomain('CognitoDomain', {

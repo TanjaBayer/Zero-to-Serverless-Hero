@@ -1,4 +1,4 @@
-import Container, { Inject, Service } from 'typedi';
+import Container, { Service } from 'typedi';
 
 import {
   AdminUpdateUserAttributesCommand,
@@ -15,11 +15,10 @@ import { REGION } from '../token/env';
 @Service()
 export class UserRepository {
   private dynamoDb = new DynamoDB({ region: Container.get(REGION) });
+  private cognitoUserPoolId = Container.get(COGNITO_USER_POOL_ID);
   private readonly userStore: DynamoStore<UserModel>;
 
-  constructor(
-    @Inject(COGNITO_USER_POOL_ID) private readonly cognitoUserPoolId: string
-  ) {
+  constructor() {
     this.userStore = new DynamoStore(UserModel, this.dynamoDb);
   }
 
