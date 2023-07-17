@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import 'class-validator';
 import { ApolloServer } from '@apollo/server';
 import 'graphql';
 import { buildSchemaSync } from 'type-graphql';
@@ -11,9 +12,13 @@ import Container from 'typedi';
 import { getHeader } from '../helper/graphql.helper';
 import { customAuthChecker } from '../helper/auth.checker';
 import { GraphQLError } from 'graphql';
+import { REGION } from '../token/env';
+import { COGNITO_USER_POOL_ID } from '../token/cognito';
 
 const API_KEYS = ['your-key'];
 
+Container.set(REGION, process.env.REGION);
+Container.set(COGNITO_USER_POOL_ID, process.env.COGNITO_USER_POOL_ID);
 const schema = buildSchemaSync({
   resolvers: [PlantLibraryResolver],
   container: Container,

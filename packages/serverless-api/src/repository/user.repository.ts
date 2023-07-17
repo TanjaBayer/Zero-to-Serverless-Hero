@@ -38,6 +38,16 @@ export class UserRepository {
   }
 
   /**
+   * Get a user from cognito by id
+   *
+   * @param id Unique id of the user can be used for anonymised usage e.g in logs
+   * @returns The created UserType
+   */
+  async getUser(id: string): Promise<UserModel> {
+    return this.userStore.get(id).exec();
+  }
+
+  /**
    * Update a user in cognito
    *
    * @param email Email address of the user to update

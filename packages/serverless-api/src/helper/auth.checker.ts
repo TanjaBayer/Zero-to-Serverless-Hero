@@ -4,20 +4,48 @@ import { GraphQLError } from 'graphql';
 import { Token } from '../interface/token.interface';
 import jwkToPem from 'jwk-to-pem';
 import { TokenExpiredError, decode, verify } from 'jsonwebtoken';
+import Container from 'typedi';
+import { UserRepository } from '../repository/user.repository';
 
 const keysCache = {};
 const userPoolUrl = `https://cognito-idp.${process.env.REGION}.amazonaws.com/${process.env.COGNITO_USER_POOL_ID}`;
 
-export const customAuthChecker: AuthChecker<Context, string> = async ({
-  context,
-}) => {
+export const customAuthChecker: AuthChecker<Context> = async (
+  { context },
+  roles
+) => {
   if (!context.authToken) {
     throw new GraphQLError('No valid Token', {
       extensions: { code: 'FORBIDDEN' },
     });
   }
-  checkTokenAndUpdateUserId(context);
-  return true;
+  await checkTokenAndUpdateUserId(context);
+
+  const userService = Container.get<UserRepository>(UserRepository);
+
+  const user = await userService.getUser(context.userId);
+
+  context.scopes = user.scopes ?? [];
+
+  // if the @Authorized() defines no roles
+  if (roles.length === 0) {
+    return true;
+  }
+  console.log('Check roles: ', roles, context.scopes);
+
+  if (context.scopes?.length === 0) {
+    throw new GraphQLError('User lacks required role', {
+      extensions: { code: 'FORBIDDEN' },
+    });
+  }
+
+  // check roles if the @Authorized('ROLE') defines a role(s)
+  if (context.scopes?.some((role) => roles.includes(role))) {
+    return true;
+  }
+  throw new GraphQLError('User lacks required role', {
+    extensions: { code: 'FORBIDDEN' },
+  });
 };
 
 export async function checkTokenAndUpdateUserId(context: Partial<Context>) {
@@ -44,6 +72,7 @@ export async function checkTokenAndUpdateUserId(context: Partial<Context>) {
     });
   }
   context.userId = token.sub;
+  console.log(context);
 }
 export async function verifyToken(
   rawToken: string

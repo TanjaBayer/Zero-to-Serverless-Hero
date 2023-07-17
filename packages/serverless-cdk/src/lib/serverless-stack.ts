@@ -75,7 +75,10 @@ export class ServerlessStack extends Stack {
       removalPolicy: RemovalPolicy.DESTROY,
       partitionKey: { name: 'id', type: AttributeType.STRING },
     });
+
     dataTable.grantReadWriteData(lambda);
+    userTable.grantReadWriteData(lambda);
+
     api.addRoutes({
       integration: readIntegration,
       methods: [HttpMethod.GET],
