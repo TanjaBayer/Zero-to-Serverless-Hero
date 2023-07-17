@@ -16,7 +16,7 @@ export class PlantLibraryResolver {
     return this.plantRepository.listPlants();
   }
 
-  @Authorized()
+  @Authorized(['user:write'])
   @Mutation(() => PlantType, {
     description: 'Add a new plant to the library.',
   })
