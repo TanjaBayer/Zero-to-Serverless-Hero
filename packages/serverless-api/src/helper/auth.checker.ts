@@ -22,7 +22,6 @@ export const customAuthChecker: AuthChecker<Context> = async (
   await checkTokenAndUpdateUserId(context);
 
   const userService = Container.get<UserRepository>(UserRepository);
-
   const user = await userService.getUser(context.userId);
 
   context.scopes = user.scopes ?? [];
